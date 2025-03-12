@@ -19,17 +19,29 @@ class AppTest < Minitest::Test
     get '/'
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    # assert_includes("", last_response.body)
+    assert_includes(last_response.body, 'about.txt')
+    assert_includes(last_response.body, 'changes.txt')
+    assert_includes(last_response.body, 'history.txt')
   end
 
-  #  def setup
-  #    @file_content = File.read("./files/about.txt")
-  #  end
-  #
-  #  def test_file_content
-  #    get "/about.txt"
-  #    assert_equal 200, last_response.status
-  #    assert_equal "text/plain", last_response["Content-Type"]
-  #    #assert_equal "Hello from about.txt", last_response.body
-  #  end
+  def test_about_txt_content
+    get '/about.txt'
+    assert_equal 200, last_response.status
+    assert_equal 'plain/text', last_response['Content-Type']
+    assert_includes(last_response.body, 'hello from about.txt')
+  end
+
+  def test_change_txt_content
+    get '/changes.txt'
+    assert_equal 200, last_response.status
+    assert_equal 'plain/text', last_response['Content-Type']
+    assert_includes(last_response.body, 'hello from changes.txt')
+  end
+
+  def test_history_txt_content
+    get '/history.txt'
+    assert_equal 200, last_response.status
+    assert_equal 'plain/text', last_response['Content-Type']
+    assert_includes(last_response.body, 'hello from history.txt')
+  end
 end
