@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en-US" >
+<head>
+  <title>File Based CMS</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/stylesheets/application.css">
+  <link rel="stylesheet" href="/stylesheets/whitespace-reset.css">
+</head>
+<body>
+  <ul>
+    <% files.each do |file| %>
+      <li>
+        <a href="/<%= file %>">
+          <%= file %>
+        </a>
+      </li>
+    <% end %>
+  </ul>
+</body>
+</html>
