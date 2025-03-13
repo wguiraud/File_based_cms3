@@ -32,6 +32,13 @@ class AppTest < Minitest::Test
     assert_includes last_response.body, 'hello from changes.txt'
   end
 
+  def test_viewing_md_document
+    get '/titles.md'
+    assert_equal 200, last_response.status
+    assert_equal 'text/html', last_response['Content-Type']
+    assert_includes last_response.body, 'hello from the markdown file'
+  end
+
   def test_document_not_found
     get '/unknown.ext'
 

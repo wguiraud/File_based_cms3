@@ -27,12 +27,45 @@ def files_names
   file_paths.map { |file| File.basename(file) }
 end
 
-def known_file?(file_name)
+def valid_file?(file_name)
   files_names.include?(file_name)
 end
 
-def read_file(file_name)
+def file_extension(file_name)
+  File.extname(file_name)
+end
+
+def set_plain_text_response_header
+  response.headers['Content-Type'] = 'text/plain'
+end
+
+def set_html_response_header
+  response.headers['Content-Type'] = 'text/html'
+end
+
+def set_response_header(file_name)
+  if file_extension(file_name) == '.txt'
+    set_plain_text_response_header
+  elsif file_extension(file_name) == '.md'
+    set_html_response_header
+  end
+end
+
+def read_text_file(file_name)
   File.read("./files/#{file_name}")
+end
+
+def read_markdown_file(file_name)
+  markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
+  markdown.render(File.read("./files/#{file_name}"))
+end
+
+def read_file(file_name)
+  if file_extension(file_name) == '.txt'
+    read_text_file(file_name)
+  elsif file_extension(file_name) == '.md'
+    read_markdown_file(file_name)
+  end
 end
 
 get '/' do
@@ -41,8 +74,8 @@ get '/' do
 end
 
 get '/:file_name' do
-  if known_file?(params[:file_name])
-    response.headers['Content-Type'] = 'text/plain'
+  if valid_file?(params[:file_name])
+    set_response_header(params[:file_name])
     read_file(params[:file_name])
   else
     session[:error] = "#{params[:file_name]} does not exist"
