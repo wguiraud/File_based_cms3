@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+# app_test.rb
 ENV['RACK_ENV'] = 'test'
 
 require 'minitest/autorun'
@@ -19,29 +20,28 @@ class AppTest < Minitest::Test
     get '/'
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
-    assert_includes(last_response.body, 'about.txt')
-    assert_includes(last_response.body, 'changes.txt')
-    assert_includes(last_response.body, 'history.txt')
+    assert_includes last_response.body, 'about.txt'
+    assert_includes last_response.body, 'changes.txt'
+    assert_includes last_response.body, 'history.txt'
   end
 
-  def test_about_txt_content
-    get '/about.txt'
-    assert_equal 200, last_response.status
-    assert_equal 'plain/text', last_response['Content-Type']
-    assert_includes(last_response.body, 'hello from about.txt')
-  end
-
-  def test_change_txt_content
+  def test_viewing_text_document
     get '/changes.txt'
     assert_equal 200, last_response.status
-    assert_equal 'plain/text', last_response['Content-Type']
-    assert_includes(last_response.body, 'hello from changes.txt')
+    assert_equal 'text/plain', last_response['Content-Type']
+    assert_includes last_response.body, 'hello from changes.txt'
   end
 
-  def test_history_txt_content
-    get '/history.txt'
+  def test_document_not_found
+    get '/unknown.ext'
+
+    assert_equal 302, last_response.status
+
+    get ''
     assert_equal 200, last_response.status
-    assert_equal 'plain/text', last_response['Content-Type']
-    assert_includes(last_response.body, 'hello from history.txt')
+    assert_includes last_response.body, 'does not exist'
+
+    get '/'
+    refute_includes last_response.body, 'does not exist'
   end
 end

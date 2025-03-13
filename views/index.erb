@@ -7,6 +7,10 @@
   <link rel="stylesheet" href="/stylesheets/whitespace-reset.css">
 </head>
 <body>
+  <% if session[:error] %>
+    <p><%= session.delete(:error) %></p>
+  <% end %>
+
   <ul>
     <% files.each do |file| %>
       <li>
