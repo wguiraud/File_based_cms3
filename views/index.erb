@@ -4,20 +4,29 @@
   <title>File Based CMS</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/stylesheets/application.css">
-  <link rel="stylesheet" href="/stylesheets/whitespace-reset.css">
 </head>
 <body>
-  <% if session[:error] %>
-    <p><%= session.delete(:error) %></p>
-  <% end %>
+  <div id="error">
+    <% if session[:message] %>
+      <p><%= session.delete(:message) %></p>
+    <% end %>
 
+    <script type="text/javascript">
+      setTimeout(function() {
+        document.getElementById('error').style.display = 'none';
+      }, 3000);
+    </script>
+  </div>
+
+  <h1>File Based CMS</h1>
   <ul>
     <% files.each do |file| %>
-      <li>
-        <a href="/<%= file %>">
-          <%= file %>
-        </a>
-      </li>
+      <div class="file_name">
+        <li>
+          <a href="/<%= file %>"><%= file %></a>
+          <a href="/<%= file %>/edit">Edit</a>
+        </li>
+      </div>
     <% end %>
   </ul>
 </body>
