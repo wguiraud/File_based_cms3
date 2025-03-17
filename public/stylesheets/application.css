@@ -41,14 +41,14 @@ li, a {
 
 a:nth-child(1) {
     text-decoration: none;
-    color: #484041;
+    color: #B5F44A;
 }
 
 a:nth-child(2) {
     text-decoration: none;
     padding: 3px;
     background-color: #B5F44A;
-    color: black;
+    color: whitesmoke;
     border-radius: 5px;
     font-weight: bold;
 }
@@ -58,4 +58,17 @@ li {
     padding: 10px;
     background-color: #79AEA3;
     border-radius: 5px;
+}
+
+#new_document{
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+#new_document a {
+    padding: 15px;
+    background-color: #434371;
+    border-radius: 3px;
+    font-weight: bold;
+
 }
