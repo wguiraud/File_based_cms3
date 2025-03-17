@@ -15,28 +15,21 @@ configure do
   set :session_secret, ENV['SESSION_SECRET']
 end
 
-def root
-  File.expand_path(__dir__)
-end
-
-def project_directories
+def data_path
   if ENV['RACK_ENV'] == 'test'
-    '/test/data/'
+    File.expand_path('test/data', __dir__)
   else
-    '/data/'
+    File.expand_path('data', __dir__)
   end
 end
 
 def file_paths
-  Dir.glob("#{root}#{project_directories}*")
+  pattern = File.join(data_path, '*')
+  Dir.glob(pattern)
 end
 
 def files_names
   file_paths.map { |f| File.basename(f) }
-end
-
-def valid_file?(file_name)
-  files_names.include?(file_name)
 end
 
 def file_extension(file_name)
@@ -60,12 +53,14 @@ def configure_response_header(file_name)
 end
 
 def read_text_file(file_name)
-  File.read(root + project_directories + file_name)
+  pattern = File.join(data_path, file_name)
+  File.read(pattern)
 end
 
 def read_markdown_file(file_name)
+  pattern = File.join(data_path, file_name)
   markdown = Redcarpet::Markdown.new(Redcarpet::Render::HTML)
-  markdown.render(File.read(root + project_directories + file_name))
+  markdown.render(File.read(pattern))
 end
 
 def read_file(file_name)
@@ -82,7 +77,8 @@ get '/' do
 end
 
 get '/:file_name' do
-  if valid_file?(params[:file_name])
+  pattern = File.join(data_path, params[:file_name])
+  if File.exist?(pattern)
     configure_response_header(params[:file_name])
     read_file(params[:file_name])
   else
@@ -101,7 +97,8 @@ post '/:file_name' do
   file_name = params[:file_name]
   new_file_content = params[:file_content]
 
-  File.write(root + project_directories + file_name, new_file_content)
+  pattern = File.join(data_path, file_name)
+  File.write(pattern, new_file_content)
 
   session[:message] = "The #{file_name} file has been updated"
   redirect '/'
