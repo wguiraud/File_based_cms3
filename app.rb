@@ -71,9 +71,62 @@ def read_file(file_name)
   end
 end
 
+def used_document_name?(document_name)
+  files_names.any? { |file_name| file_name == document_name }
+end
+
+def invalid_character?(document_name)
+  valid_characters = /^[a-zA-Z]+\.[a-zA-Z]{2,3}$/
+  !document_name.match?(valid_characters)
+end
+
+def invalid_length?(document_name)
+  !(1..100).include?(document_name.size)
+end
+
+def remove_white_spaces(document_name)
+  document_name.strip
+end
+
+def error_for_document_name(document_name)
+  if used_document_name?(document_name)
+    'The document name must be unique'
+  elsif invalid_character?(document_name)
+    'The document name must contain an extention'
+  elsif invalid_length?(document_name)
+    'The document name must be between 1 and 100 characters'
+  end
+end
+
+def create_document(name, content = '')
+  File.open(File.join(data_path, name), 'w') do |f|
+    f.write(content)
+  end
+end
+
+
 get '/' do
   files = files_names
   erb :index, locals: { files: files }
+end
+
+get "/new_document" do
+  erb :new_document
+end
+
+post "/add_new_document" do
+  document_name = remove_white_spaces(params[:new_document_name])
+
+  error = error_for_document_name(document_name)
+  if error
+    status 422
+    session[:error] = error
+    erb :new_document
+  else
+    session[:message] = "The new document #{document_name} has been created."
+     create_document(document_name)
+     redirect "/"
+  end
 end
 
 get '/:file_name' do
@@ -103,3 +156,5 @@ post '/:file_name' do
   session[:message] = "The #{file_name} file has been updated"
   redirect '/'
 end
+
+

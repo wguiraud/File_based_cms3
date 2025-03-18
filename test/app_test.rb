@@ -97,4 +97,36 @@ class AppTest < Minitest::Test
     get '/changes.txt'
     assert_includes last_response.body, 'new content'
   end
+
+  def test_new_document_template
+    get "/new_document"
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, 'Add a new document'
+    assert_includes last_response.body, '<input type="submit" value="Create Document"'
+  end
+
+  def test_new_document_name_with_invalid_name
+    post '/add_new_document', new_document_name: 'history/txt'
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'The document name must contain an extention'
+  end
+
+  def test_non_unique_new_document_name
+    create_document('history.txt')
+
+    post '/add_new_document', new_document_name: 'history.txt'
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'The document name must be unique'
+  end
+
+  def test_new_document_with_valid_name
+    post '/add_new_document', new_document_name: 'history.txt'
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'The new document history.txt has been created'
+
+    get '/'
+    assert_includes last_response.body, 'history.txt'
+  end
 end

@@ -1,0 +1,17 @@
+<% if session[:error] %>
+  <div id="error-message">
+    <p><%= session.delete(:error) %></p>
+  </div>
+<% end %>
+
+<script type="text/javascript">
+    setTimeout(function() {
+        document.getElementById('error-message').style.display = 'none';
+    }, 4500); // 3000 milliseconds = 3 seconds
+</script>
+
+<form class="new_document" action="/add_new_document" method="post">
+  <label for="new_document_name">Add a new document</label>
+  <input type="text" name="new_document_name" id="new_document_name" placeholder="new document name">
+  <input type="submit" value="Create Document">
+</form>
