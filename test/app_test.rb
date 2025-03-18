@@ -38,7 +38,8 @@ class AppTest < Minitest::Test
     assert_equal 200, last_response.status
     assert_equal 'text/html;charset=utf-8', last_response['Content-Type']
     assert_includes last_response.body, 'New Document'
-    assert_includes last_response.body, 'about.txt'
+    assert_includes last_response.body, 'Edit'
+    assert_includes last_response.body, 'Delete'
   end
 
   def test_viewing_text_document
@@ -129,4 +130,20 @@ class AppTest < Minitest::Test
     get '/'
     assert_includes last_response.body, 'history.txt'
   end
+
+  def test_delete_document_standard_request
+    create_document('hello.txt')
+
+    post '/hello.txt/delete'
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'has been deleted'
+
+    get '/'
+    refute_includes last_response.body, 'hello.txt'
+  end
+
+
+
 end

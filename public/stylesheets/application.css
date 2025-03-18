@@ -44,13 +44,29 @@ a:nth-child(1) {
     color: #B5F44A;
 }
 
-a:nth-child(2) {
-    text-decoration: none;
-    padding: 3px;
+.destructive-action {
+    display: flex;
+}
+
+.destructive-action a {
     background-color: #B5F44A;
     color: whitesmoke;
+    margin-right: 10px;
+    padding: 4px 5px 4px 5px;
+    border-radius: 5px;
+    flex-flow: row;
+    font-weight: bold;
+}
+.destructive-action button  {
+    font-size: 15px;
+    flex-flow: row;
+    background-color: #434371;
+    text-decoration: none;
+    color: #B5F44A;
+    padding: 4px 5px 7px 5px;
     border-radius: 5px;
     font-weight: bold;
+    border: none;
 }
 
 li {
@@ -70,9 +86,4 @@ li {
     background-color: #434371;
     border-radius: 3px;
     font-weight: bold;
-}
-
-.new_document {
-
-
 }

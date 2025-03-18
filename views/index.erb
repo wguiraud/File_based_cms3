@@ -4,6 +4,8 @@
   <title>File Based CMS</title>
   <meta charset="UTF-8">
   <link rel="stylesheet" href="/stylesheets/application.css">
+  <script src="/javascripts/jquery-3.7.1.min.js"></script>
+  <script src="/javascripts/application.js"></script>
 </head>
 <body>
   <div id="error">
@@ -24,7 +26,12 @@
       <div class="file_name">
         <li>
           <a href="/<%= file %>"><%= file %></a>
-          <a href="/<%= file %>/edit">Edit</a>
+          <div class="destructive-action">
+            <a href="/<%= file %>/edit">Edit</a>
+            <form class="delete" action="/<%= file %>/delete" method="post">
+              <button>Delete</button>
+            </form>
+          </div>
         </li>
       </div>
     <% end %>

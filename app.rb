@@ -106,8 +106,12 @@ end
 
 
 get '/' do
-  files = files_names
-  erb :index, locals: { files: files }
+  if signed_in?
+    files = files_names
+    erb :index, locals: { files: files }
+  else
+    erb :signin
+  end
 end
 
 get "/new_document" do
@@ -130,8 +134,8 @@ post "/add_new_document" do
 end
 
 get '/:file_name' do
-  pattern = File.join(data_path, params[:file_name])
-  if File.exist?(pattern)
+  path = File.join(data_path, params[:file_name])
+  if File.exist?(path)
     configure_response_header(params[:file_name])
     read_file(params[:file_name])
   else
@@ -150,11 +154,26 @@ post '/:file_name' do
   file_name = params[:file_name]
   new_file_content = params[:file_content]
 
-  pattern = File.join(data_path, file_name)
-  File.write(pattern, new_file_content)
+  path = File.join(data_path, file_name)
+  File.write(path, new_file_content)
 
   session[:message] = "The #{file_name} file has been updated"
   redirect '/'
+end
+
+post '/:file_name/delete' do
+  file_name = params[:file_name]
+  path = File.join(data_path, file_name)
+
+  File.delete(path)
+
+  if env['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest'
+    status 204
+  else
+    session[:message] = "The #{file_name} file has been deleted."
+    redirect '/'
+  end
+
 end
 
 
