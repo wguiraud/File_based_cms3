@@ -86,4 +86,60 @@ li {
     background-color: #434371;
     border-radius: 3px;
     font-weight: bold;
+    color: #70EE9C;
+}
+#signin{
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+#signin a {
+    color: #70EE9C;
+    padding: 15px;
+    background-color: #434371;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    margin-right: 10px;
+}
+
+dl {
+    display: flex;
+    justify-content: space-between;
+}
+
+dd {
+    width: 80%;
+}
+
+dd input {
+    width: 100%;
+}
+
+.signedout {
+    margin: 850px 10px 0 10px;
+    display: flex;
+    justify-content: space-between;
+    background-color: #79AEA3;
+    color: #B5F44A;
+    border-radius: 3px;
+}
+
+.signedout p {
+    padding: 0 0 0 10px;
+    border-radius: 3px;
+    color: #B5F44A;
+}
+
+.signedout button {
+    color: #B5F44A;
+    padding: 15px;
+    background-color: #434371;
+    border-radius: 3px;
+    font: bold 20px "Arial", sans-serif;
+    border: none;
 }

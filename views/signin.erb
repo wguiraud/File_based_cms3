@@ -1,0 +1,38 @@
+<head>
+  <title>File Based CMS</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/stylesheets/application.css">
+</head>
+<body>
+<% if session[:error] %>
+  <div id="error">
+      <p><%= session.delete(:error) %></p>
+
+    <script type="text/javascript">
+        setTimeout(function() {
+            document.getElementById('error').style.display = 'none';
+        }, 3000);
+    </script>
+  </div>
+<% end %>
+
+<form action="/users/signin" method="post">
+  <dl>
+    <dt>
+      <label for="username">Username</label>
+    </dt>
+    <dd>
+      <input type="text" name="username" value="" placeholder="<%= params[:username] %>">
+    </dd>
+  </dl>
+  <dl>
+    <dt>
+      <label for="password">Password</label>
+    </dt>
+    <dd>
+      <input type="text" name="password" value="" placeholder="<%= params[:password] %>">
+    </dd>
+  </dl>
+  <button type="submit">Sign In</button>
+</form>
+</body>

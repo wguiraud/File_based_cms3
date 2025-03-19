@@ -104,21 +104,24 @@ def create_document(name, content = '')
   end
 end
 
-
-get '/' do
-  if signed_in?
-    files = files_names
-    erb :index, locals: { files: files }
-  else
-    erb :signin
-  end
+def valid_credentials?(username, password)
+  username == 'admin' && password == 'secret'
 end
 
-get "/new_document" do
+def signed_in?
+  session[:signedin] == true
+end
+
+get '/' do
+  files = files_names
+  erb :index, locals: { files: files }
+end
+
+get '/new_document' do
   erb :new_document
 end
 
-post "/add_new_document" do
+post '/add_new_document' do
   document_name = remove_white_spaces(params[:new_document_name])
 
   error = error_for_document_name(document_name)
@@ -128,8 +131,8 @@ post "/add_new_document" do
     erb :new_document
   else
     session[:message] = "The new document #{document_name} has been created."
-     create_document(document_name)
-     redirect "/"
+    create_document(document_name)
+    redirect '/'
   end
 end
 
@@ -148,6 +151,12 @@ get '/:file_name/edit' do
   file_name = params[:file_name]
   file_content = read_file(file_name)
   erb :edit, locals: { file_name: file_name, file_content: file_content }
+end
+
+post '/users/signout' do
+  session.delete(:username)
+  session[:message] = 'You have been signed out.'
+  redirect '/'
 end
 
 post '/:file_name' do
@@ -173,7 +182,23 @@ post '/:file_name/delete' do
     session[:message] = "The #{file_name} file has been deleted."
     redirect '/'
   end
-
 end
 
+post '/users/signin' do
+  username = params[:username]
+  password = params[:password]
 
+  if valid_credentials?(username, password)
+    session[:message] = 'Welcome'
+    session[:username] = username
+    redirect '/'
+  else
+    session[:error] = 'invalid credentials'
+    status 422
+    erb :signin
+  end
+end
+
+get '/users/signin' do
+  erb :signin
+end

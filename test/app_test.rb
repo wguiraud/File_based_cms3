@@ -40,6 +40,7 @@ class AppTest < Minitest::Test
     assert_includes last_response.body, 'New Document'
     assert_includes last_response.body, 'Edit'
     assert_includes last_response.body, 'Delete'
+    assert_includes last_response.body, 'Sign in'
   end
 
   def test_viewing_text_document
@@ -100,7 +101,7 @@ class AppTest < Minitest::Test
   end
 
   def test_new_document_template
-    get "/new_document"
+    get '/new_document'
     assert_equal 200, last_response.status
     assert_includes last_response.body, 'Add a new document'
     assert_includes last_response.body, '<input type="submit" value="Create Document"'
@@ -144,6 +145,48 @@ class AppTest < Minitest::Test
     refute_includes last_response.body, 'hello.txt'
   end
 
+  def test_signin_page
+    get '/users/signin'
 
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, 'Username'
+    assert_includes last_response.body, 'Password'
+    assert_includes last_response.body, 'Sign In'
+  end
 
+  def test_sigingin_with_valid_credentials
+    post '/users/signin', username: 'admin', password: 'secret'
+
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome'
+
+    get '/'
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, 'Signed in as: admin'
+    assert_includes last_response.body, 'Sign out'
+  end
+
+  def test_signinin_with_invalid_credentials
+    post '/users/signin', username: 'hello', password: 'world'
+
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, 'invalid credentials'
+  end
+
+  def test_signingout
+    post '/users/signin', username: 'admin', password: 'secret'
+    get last_response['Location']
+    assert_includes last_response.body, 'Welcome'
+
+    post '/users/signout'
+    assert_equal 302, last_response.status
+
+    get last_response['Location']
+    assert_includes last_response.body, 'You have been signed out'
+
+    get '/'
+    assert_equal 200, last_response.status
+  end
 end

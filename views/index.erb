@@ -20,25 +20,44 @@
     </script>
   </div>
 
-  <h1>File Based CMS</h1>
-  <ul>
-    <% files.each do |file| %>
-      <div class="file_name">
-        <li>
-          <a href="/<%= file %>"><%= file %></a>
-          <div class="destructive-action">
-            <a href="/<%= file %>/edit">Edit</a>
-            <form class="delete" action="/<%= file %>/delete" method="post">
-              <button>Delete</button>
-            </form>
+  <div class="main">
+    <h1>File Based CMS</h1>
+      <ul>
+        <% files.each do |file| %>
+          <div class="file_name">
+            <li>
+              <a href="/<%= file %>"><%= file %></a>
+              <div class="destructive-action">
+                <a href="/<%= file %>/edit">Edit</a>
+                <form class="delete" action="/<%= file %>/delete" method="post">
+                  <button>Delete</button>
+                </form>
+              </div>
+            </li>
           </div>
-        </li>
+        <% end %>
+      </ul>
+  </div>
+
+  <div class="footer">
+    <div id="new_document">
+      <a href="/new_document">New Document</a>
+    </div>
+
+    <% if !session[:username] %>
+      <div id="signin">
+        <a href="/users/signin">Sign in</a>
       </div>
     <% end %>
-  </ul>
-
-  <div id="new_document">
-    <a href="/new_document">New Document</a>
   </div>
+
+  <% if session[:username] %>
+    <form class="signedout" action="/users/signout" method="post">
+      <p>Signed in as: <%= session[:username] %></p>
+      <button type="submit">Sign out</button>
+    </form>
+  <% end %>
+
+
 </body>
 </html>
