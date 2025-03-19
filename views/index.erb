@@ -8,10 +8,9 @@
   <script src="/javascripts/application.js"></script>
 </head>
 <body>
+<% if session[:message] %>
   <div id="error">
-    <% if session[:message] %>
       <p><%= session.delete(:message) %></p>
-    <% end %>
 
     <script type="text/javascript">
       setTimeout(function() {
@@ -19,6 +18,7 @@
       }, 3000);
     </script>
   </div>
+<% end %>
 
   <div class="main">
     <h1>File Based CMS</h1>
