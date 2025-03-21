@@ -108,8 +108,15 @@ def valid_credentials?(username, password)
   username == 'admin' && password == 'secret'
 end
 
-def signed_in?
-  session[:signedin] == true
+def user_signed_in?
+  session.key?(:username)
+end
+
+def require_user_signed_in
+  unless user_signed_in?
+    session[:message] = 'You must be signed in to do that.'
+    redirect '/'
+  end
 end
 
 get '/' do
@@ -118,10 +125,13 @@ get '/' do
 end
 
 get '/new_document' do
+  require_user_signed_in
   erb :new_document
 end
 
 post '/add_new_document' do
+  require_user_signed_in
+
   document_name = remove_white_spaces(params[:new_document_name])
 
   error = error_for_document_name(document_name)
@@ -148,6 +158,7 @@ get '/:file_name' do
 end
 
 get '/:file_name/edit' do
+  require_user_signed_in
   file_name = params[:file_name]
   file_content = read_file(file_name)
   erb :edit, locals: { file_name: file_name, file_content: file_content }
@@ -160,6 +171,8 @@ post '/users/signout' do
 end
 
 post '/:file_name' do
+  require_user_signed_in
+
   file_name = params[:file_name]
   new_file_content = params[:file_content]
 
@@ -171,6 +184,8 @@ post '/:file_name' do
 end
 
 post '/:file_name/delete' do
+  require_user_signed_in
+
   file_name = params[:file_name]
   path = File.join(data_path, file_name)
 

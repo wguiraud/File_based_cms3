@@ -12,16 +12,6 @@ h1 {
     color: #70EE9C;
 }
 
-#error {
-    display: block;
-    background-color: #434371;
-    color: #70EE9C;
-    padding: 10px;
-    border-radius: 3px;
-    text-align: center;
-    font-weight: bold;
-    margin: 20px;
-}
 
 ul {
     list-style-type: none;
@@ -142,4 +132,17 @@ dd input {
     border-radius: 3px;
     font: bold 20px "Arial", sans-serif;
     border: none;
+}
+
+#error {
+    outline: red solid;
+
+    display: block;
+    background-color: #434371;
+    color: #70EE9C;
+    padding: 10px;
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+    margin: 20px;
 }

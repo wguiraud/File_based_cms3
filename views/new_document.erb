@@ -1,14 +1,21 @@
+<head>
+  <link rel="stylesheet" href="/stylesheets/application.css">
+</head>
+
 <% if session[:error] %>
-  <div id="error-message">
+  <div id="error">
     <p><%= session.delete(:error) %></p>
   </div>
+
+  <script type="text/javascript">
+      setTimeout(function() {
+          document.getElementById('error').style.display = 'none';
+      }, 3000);
+  </script>
+
+
 <% end %>
 
-<script type="text/javascript">
-    setTimeout(function() {
-        document.getElementById('error-message').style.display = 'none';
-    }, 4500); // 3000 milliseconds = 3 seconds
-</script>
 
 <form class="new_document" action="/add_new_document" method="post">
   <label for="new_document_name">Add a new document</label>
