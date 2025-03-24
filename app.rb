@@ -8,6 +8,7 @@ require 'pry' if development?
 require 'sinatra/content_for'
 require 'erubi'
 require 'redcarpet'
+require 'yaml'
 
 configure do
   require_relative 'config/environments/test' if test?
@@ -107,7 +108,7 @@ end
 def valid_credentials?(username, password)
   yaml_file_path = '/home/launchschool/RubymineProjects/File_based_cms3/users_credentials.yaml'
   credentials = YAML.load_file(yaml_file_path)
-  credentials.find { |k, v| k == username && v == password }
+  credentials.any? { |k, v| k == username && v == password }
 end
 
 def user_signed_in?

@@ -196,16 +196,17 @@ class AppTest < Minitest::Test
   end
 
   def test_signingin_with_valid_credentials
-    post '/users/signin', username: 'admin', password: 'secret'
+    user_name, pass_word = 'bumblebee', 'pollen'
+    post '/users/signin', username: user_name, password: pass_word
 
     assert_equal 302, last_response.status
-    assert_equal 'admin', session[:username]
+    assert_equal user_name, session[:username]
     assert_equal 'Welcome', session[:message]
 
     get '/'
     assert_equal 200, last_response.status
     assert_includes last_response.body, 'Sign out'
-    assert_includes last_response.body, 'Signed in as: admin'
+    assert_includes last_response.body, 'Signed in as: ' + user_name
   end
 
   def test_signingin_with_invalid_credentials
@@ -248,5 +249,12 @@ class AppTest < Minitest::Test
 
     assert_equal 200, last_response.status
     assert_includes last_response.body, 'You must be signed in to do that'
+  end
+
+  def test_valid_credentials
+    assert_equal false, valid_credentials?('admin', 'secret')
+    assert_equal true, valid_credentials?('bumblebee', 'pollen')
+    assert_equal false, valid_credentials?('tutulu', 'pollen')
+    assert_equal true, valid_credentials?('tutulu', 'salad')
   end
 end
