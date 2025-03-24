@@ -105,7 +105,9 @@ def create_document(name, content = '')
 end
 
 def valid_credentials?(username, password)
-  username == 'admin' && password == 'secret'
+  yaml_file_path = '/home/launchschool/RubymineProjects/File_based_cms3/users_credentials.yaml'
+  credentials = YAML.load_file(yaml_file_path)
+  credentials.find { |k, v| k == username && v == password }
 end
 
 def user_signed_in?
