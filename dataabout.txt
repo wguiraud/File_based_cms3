@@ -1,7 +1,0 @@
-                hello from about.txt hello from dev env hello world
-testing file.join
-
-  
-  
-  
-  

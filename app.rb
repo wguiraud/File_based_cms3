@@ -9,6 +9,7 @@ require 'sinatra/content_for'
 require 'erubi'
 require 'redcarpet'
 require 'yaml'
+require 'bcrypt'
 
 configure do
   require_relative 'config/environments/test' if test?
@@ -105,21 +106,26 @@ def create_document(name, content = '')
   end
 end
 
-def valid_credentials?(username, password)
-  yaml_file_path = '/home/launchschool/RubymineProjects/File_based_cms3/users_credentials.yaml'
-  credentials = YAML.load_file(yaml_file_path)
-  credentials.any? { |k, v| k == username && v == password }
-end
-
 def user_signed_in?
   session.key?(:username)
 end
 
 def require_user_signed_in
-  unless user_signed_in?
-    session[:message] = 'You must be signed in to do that.'
-    redirect '/'
-  end
+  return if user_signed_in?
+
+  session[:message] = 'You must be signed in to do that.'
+  redirect '/'
+end
+
+def load_user_credentials
+  credentials = File.expand_path(File.join(data_path, 'users_credentials.yaml'))
+  YAML.load_file(credentials)
+end
+
+def valid_credentials?(username, given_password)
+  return false if load_user_credentials[username].nil?
+
+  BCrypt::Password.new(load_user_credentials[username]['str']) == given_password
 end
 
 get '/' do
