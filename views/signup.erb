@@ -1,0 +1,47 @@
+<head>
+  <title>File Based CMS</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="/stylesheets/application.css">
+</head>
+<body>
+  <% if session[:error] %>
+    <div id="error">
+      <p><%= session.delete(:error) %></p>
+
+      <script type="text/javascript">
+          setTimeout(function() {
+              document.getElementById('error').style.display = 'none';
+          }, 3000);
+      </script>
+    </div>
+  <% end %>
+
+  <form action="/users/signup" method="post">
+    <dl>
+      <dt>
+        <label for="username">Enter a Username</label>
+      </dt>
+      <dd>
+        <input type="text" name="username" value="" placeholder="Username">
+      </dd>
+    </dl>
+    <dl>
+      <dt>
+        <label for="password">Enter a Password</label>
+      </dt>
+      <dd>
+        <input type="text" name="password" value="" placeholder="Password">
+      </dd>
+    </dl>
+    <dl>
+      <dt>
+        <label for="confirm_password">Confirm Password</label>
+      </dt>
+      <dd>
+        <input type="text" name="confirm_password" value=""
+         placeholder="Confirm Password">
+      </dd>
+    </dl>
+    <button type="submit">Submit</button>
+  </form>
+</body>

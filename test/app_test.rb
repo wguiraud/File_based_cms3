@@ -34,7 +34,7 @@ class AppTest < Minitest::Test
   end
 
   def copy_yaml_file
-    FileUtils.cp('./data/users_credentials.yaml', './test/data')
+    FileUtils.cp('./users_credentials.yaml', './test/data/users_credentials.yaml')
   end
 
   def session
@@ -277,5 +277,79 @@ class AppTest < Minitest::Test
     given_username = 'bumblebee'
 
     assert_equal true, valid_credentials?(given_username, given_password)
+  end
+
+  def test_index_page_contains_signup_link
+    get '/'
+
+    assert_includes last_response.body, '<a href="/users/signin">Sign in</a>'
+  end
+
+  def test_view_signup_form
+    get '/signup'
+
+    assert_equal 200, last_response.status
+    assert_includes last_response.body, '<label for="username">Enter a Username</label>'
+    assert_includes last_response.body, '<label for="password">Enter a Password</label>'
+    assert_includes last_response.body, 'for="confirm_password">Confirm Password'
+    assert_includes last_response.body, '<button type="submit">Submit</button>'
+  end
+
+  def test_signup_with_empty_user_name
+    username = ''
+    password = '@@trees'
+    confirm_password = '@@trees'
+
+    post '/users/signup', username: username, password: password, confirm_password: confirm_password
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, '<p>the username cannot be empty</p>'
+  end
+
+  def test_signup_with_empty_password
+    username = 'beaver'
+    password = ''
+    confirm_password = ''
+
+    post '/users/signup', username: username, password: password, confirm_password: confirm_password
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, '<p>the password cannot be empty</p>'
+  end
+
+  def test_signup_with_password_not_matching_confirmation
+    username = 'beaver'
+    password = '@@trees'
+    confirm_password = 'tree'
+
+    post '/users/signup', username: username, password: password, confirm_password: confirm_password
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, "<p>the passwords don't match</p>"
+  end
+
+  def test_signup_with_existing_user
+    copy_yaml_file
+    username = 'bumblebee'
+    password = 'pollen'
+    confirm_password = 'pollen'
+
+    post '/users/signup', username: username, password: password, confirm_password: confirm_password
+    assert_equal 422, last_response.status
+    assert_includes last_response.body, '<p>the username already exists</p>'
+  end
+
+  def test_siginup_with_valid_credentials
+    copy_yaml_file
+
+    username = 'beaver2'
+    password = '@@@trees2'
+    confirm_password = '@@@trees2'
+
+    post '/users/signup', username: username, password: password, confirm_password: confirm_password
+
+    assert_equal 302, last_response.status
+    assert_equal 'beaver2', session[:username]
+    assert_equal 'Welcome, account has been created', session[:message]
+
+    get '/'
+    assert_equal 200, last_response.status
   end
 end

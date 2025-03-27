@@ -77,23 +77,37 @@ def used_document_name?(document_name)
   files_names.any? { |file_name| file_name == document_name }
 end
 
-def invalid_character?(document_name)
+def invalid_filename_characters?(document_name)
   valid_characters = /^[a-zA-Z]+\.[a-zA-Z]{2,3}$/
   !document_name.match?(valid_characters)
+end
+
+def invalid_signup_credentials?(username, password)
+  invalid_signup_username?(username) && invalid_signup_password?(password)
+end
+
+def invalid_signup_username?(username)
+  valid_characters = /^[a-zA-Z0-9_]+$/
+  !username.match?(valid_characters)
+end
+
+def invalid_signup_password?(password)
+  valid_characters = /^\.+$/
+  !password.match?(valid_characters)
 end
 
 def invalid_length?(document_name)
   !(1..100).include?(document_name.size)
 end
 
-def remove_white_spaces(document_name)
-  document_name.strip
+def remove_white_spaces(name)
+  name.strip
 end
 
 def error_for_document_name(document_name)
   if used_document_name?(document_name)
     'The document name must be unique'
-  elsif invalid_character?(document_name)
+  elsif invalid_filename_characters?(document_name)
     'The document name must contain an extention'
   elsif invalid_length?(document_name)
     'The document name must be between 1 and 100 characters'
@@ -118,19 +132,36 @@ def require_user_signed_in
 end
 
 def load_user_credentials
-  credentials = File.expand_path(File.join(data_path, 'users_credentials.yaml'))
-  YAML.load_file(credentials)
+  if ENV['RACK_ENV'] == 'test'
+    YAML.load_file('./test/data/users_credentials.yaml')
+  else
+    YAML.load_file('users_credentials.yaml')
+  end
 end
 
 def valid_credentials?(username, given_password)
   return false if load_user_credentials[username].nil?
 
-  BCrypt::Password.new(load_user_credentials[username]['str']) == given_password
+  BCrypt::Password.new(load_user_credentials[username]) == given_password
+end
+
+def create_yaml_credentials(username, password)
+  user_credentials_hash = load_user_credentials
+  user_credentials_hash[username] = BCrypt::Password.create(password).to_s
+  if ENV['RACK_ENV'] == 'test'
+    File.write('./test/data/users_credentials.yaml', user_credentials_hash.to_yaml)
+  else
+    File.write('./users_credentials.yaml', user_credentials_hash.to_yaml)
+  end
 end
 
 get '/' do
   files = files_names
   erb :index, locals: { files: files }
+end
+
+get '/signup' do
+  erb :signup
 end
 
 get '/new_document' do
@@ -177,6 +208,35 @@ post '/users/signout' do
   session.delete(:username)
   session[:message] = 'You have been signed out.'
   redirect '/'
+end
+
+post '/users/signup' do
+  username = params[:username]
+  password = params[:password]
+  confirm_password = params[:confirm_password]
+
+  if username.empty?
+    session[:error] = 'the username cannot be empty'
+    status 422
+    erb :signup
+  elsif password.empty?
+    session[:error] = 'the password cannot be empty'
+    status 422
+    erb :signup
+  elsif password != confirm_password
+    session[:error] = "the passwords don't match"
+    status 422
+    erb :signup
+  elsif load_user_credentials.key?(username)
+    session[:error] = 'the username already exists'
+    status 422
+    erb :signup
+  else
+    create_yaml_credentials(username, password)
+    session[:username] = username
+    session[:message] = 'Welcome, account has been created'
+    redirect '/'
+  end
 end
 
 post '/:file_name' do

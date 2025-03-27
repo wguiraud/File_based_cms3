@@ -135,8 +135,6 @@ dd input {
 }
 
 #error {
-    outline: red solid;
-
     display: block;
     background-color: #434371;
     color: #70EE9C;
@@ -146,3 +144,18 @@ dd input {
     font-weight: bold;
     margin: 20px;
 }
+
+#signup{
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+#signup a {
+    color: #70EE9C;
+    padding: 15px;
+    background-color: #434371;
+    border-radius: 3px;
+    font-weight: bold;
+}
+
+
